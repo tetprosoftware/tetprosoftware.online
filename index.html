@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tết Pro Software Status – Trạng thái dịch vụ</title>
+<meta name="description" content="Trang theo dõi trạng thái website và dịch vụ của Tết Pro Software. Hiển thị dữ liệu giám sát khi nguồn JSON được cấu hình; không công bố uptime chưa xác minh.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://www.tetprosoftware.online/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tết Pro Software">
+<meta property="og:title" content="Tết Pro Software Status – Trạng thái dịch vụ">
+<meta property="og:description" content="Theo dõi trạng thái website, sự cố và bảo trì của hệ sinh thái Tết Pro Software.">
+<meta property="og:url" content="https://www.tetprosoftware.online/">
+<meta property="og:locale" content="vi_VN">
+<meta name="twitter:card" content="summary">
+<meta name="robots" content="index,follow">
+<style>
+:root{--bg:#f6f7fb;--surface:#fff;--text:#14182b;--muted:#5b6382;--border:#e1e4f0;--accent:#c8102e;
+--ok:#0b7a43;--ok-bg:#e3f6ec;--warn:#8a5a00;--warn-bg:#fff2d6;--part:#a24100;--part-bg:#ffe6d3;--bad:#b00020;--bad-bg:#fde3e7;--mnt:#1f4fb4;--mnt-bg:#e2ebff;--unk:#4b5472;--unk-bg:#eceef6;--shadow:0 1px 2px rgba(20,24,43,.06),0 8px 24px rgba(20,24,43,.05)}
+:root[data-theme=dark]{--bg:#0d1020;--surface:#161a2e;--text:#eceefb;--muted:#9aa3c7;--border:#272d4a;--accent:#ff4d62;
+--ok:#4ade80;--ok-bg:#12331f;--warn:#fbbf24;--warn-bg:#3a2c0a;--part:#fb923c;--part-bg:#3b2208;--bad:#ff6b81;--bad-bg:#3d1019;--mnt:#7aa2ff;--mnt-bg:#14264d;--unk:#b3bbdc;--unk-bg:#232843;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0d1020;--surface:#161a2e;--text:#eceefb;--muted:#9aa3c7;--border:#272d4a;--accent:#ff4d62;--ok:#4ade80;--ok-bg:#12331f;--warn:#fbbf24;--warn-bg:#3a2c0a;--part:#fb923c;--part-bg:#3b2208;--bad:#ff6b81;--bad-bg:#3d1019;--mnt:#7aa2ff;--mnt-bg:#14264d;--unk:#b3bbdc;--unk-bg:#232843;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3)}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+a{color:inherit}a:focus-visible,button:focus-visible{outline:3px solid var(--mnt);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.top{border-bottom:1px solid var(--border);background:var(--surface)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;text-decoration:none}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:.78rem;line-height:1.1}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:8px 14px;border-radius:10px;font:inherit;font-size:.9rem;cursor:pointer;text-decoration:none;min-height:40px}
+.btn:hover{border-color:var(--muted)}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.tools{display:flex;gap:8px}
+main{padding:24px 0 48px}
+section{margin-top:32px}
+h1{font-size:clamp(1.5rem,4vw,2.1rem);line-height:1.2;margin:0 0 6px}
+h2{font-size:1.25rem;margin:0 0 12px}
+.muted{color:var(--muted)}.small{font-size:.85rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+.overview{display:flex;gap:16px;align-items:flex-start;border-left:6px solid var(--unk)}
+.overview .ico{font-size:1.8rem;line-height:1}
+.overview[data-s=operational]{border-left-color:var(--ok)}.overview[data-s=degraded]{border-left-color:var(--warn)}.overview[data-s=partial_outage]{border-left-color:var(--part)}.overview[data-s=major_outage]{border-left-color:var(--bad)}.overview[data-s=maintenance]{border-left-color:var(--mnt)}
+.overview h2{margin:0 0 4px;font-size:1.3rem}
+.banner{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:.92rem;background:var(--unk-bg)}
+.banner.err{background:var(--bad-bg);color:var(--bad)}.banner.stale{background:var(--warn-bg);color:var(--warn)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.comp{display:flex;flex-direction:column;gap:10px}
+.comp h3{margin:0;font-size:1.02rem}
+.comp .url{font-size:.82rem;color:var(--muted);word-break:break-all}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:.8rem;font-weight:700;white-space:nowrap}
+.badge[data-s=operational]{background:var(--ok-bg);color:var(--ok)}.badge[data-s=degraded]{background:var(--warn-bg);color:var(--warn)}.badge[data-s=partial_outage]{background:var(--part-bg);color:var(--part)}.badge[data-s=major_outage]{background:var(--bad-bg);color:var(--bad)}.badge[data-s=maintenance]{background:var(--mnt-bg);color:var(--mnt)}.badge[data-s=unknown]{background:var(--unk-bg);color:var(--unk)}
+.hist{display:flex;gap:2px;height:22px}
+.hist i{flex:1;border-radius:2px;background:var(--unk-bg);border:1px solid var(--border)}
+.hist i[data-s=operational]{background:var(--ok)}.hist i[data-s=degraded]{background:var(--warn)}.hist i[data-s=partial_outage]{background:var(--part)}.hist i[data-s=major_outage]{background:var(--bad)}.hist i[data-s=maintenance]{background:var(--mnt)}
+.comp .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.list{display:grid;gap:12px}
+.item h3{margin:0 0 4px;font-size:1rem}
+.empty{color:var(--muted);text-align:center;padding:22px}
+.skel{height:130px;border-radius:16px;background:linear-gradient(90deg,var(--unk-bg),var(--surface),var(--unk-bg));background-size:200% 100%;animation:sh 1.4s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){.skel{animation:none}html{scroll-behavior:auto}}
+ol.steps{margin:0;padding-left:20px}ol.steps li{margin:6px 0}
+details{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:12px 16px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:600}details p{margin:8px 0 0;color:var(--muted)}
+footer{border-top:1px solid var(--border);background:var(--surface);padding:28px 0;font-size:.9rem}
+.cols{display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+footer h2{font-size:.95rem}footer ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 14px}
+footer li a{color:var(--muted)}footer li a:hover{color:var(--text)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="./" aria-label="Tết Pro Software Status">
+      <span class="logo" aria-hidden="true">T</span>
+      <span>Tết Pro Software Status<small>Trang theo dõi trạng thái dịch vụ</small></span>
+    </a>
+    <div class="tools">
+      <button class="btn" id="refresh" type="button">↻ Làm mới</button>
+      <button class="btn" id="theme" type="button" aria-label="Chuyển giao diện sáng/tối">◐ Giao diện</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+  <section aria-labelledby="overview-title" aria-live="polite">
+    <h1>Trạng thái dịch vụ</h1>
+    <p class="muted">Thông tin trung thực về tình trạng website và dịch vụ của Tết Pro Software.</p>
+    <div class="card overview" id="overview" data-s="unknown">
+      <div class="ico" id="ov-ico" aria-hidden="true">?</div>
+      <div>
+        <h2 id="overview-title">Chưa có dữ liệu giám sát trực tiếp</h2>
+        <div class="muted" id="ov-text">Monitoring chưa được cấu hình — trạng thái chưa xác minh.</div>
+        <div class="small muted" id="ov-time"></div>
+      </div>
+    </div>
+    <div class="banner" id="banner" hidden></div>
+  </section>
+
+  <section aria-labelledby="comp-title">
+    <h2 id="comp-title">Thành phần theo dõi</h2>
+    <div class="grid" id="components"></div>
+  </section>
+
+  <section aria-labelledby="inc-title">
+    <h2 id="inc-title">Lịch sử sự cố</h2>
+    <div class="list" id="incidents"><div class="card empty">Chưa có dữ liệu sự cố từ nguồn giám sát.</div></div>
+  </section>
+
+  <section aria-labelledby="mnt-title">
+    <h2 id="mnt-title">Bảo trì theo lịch</h2>
+    <div class="list" id="maintenances"><div class="card empty">Chưa có dữ liệu bảo trì từ nguồn giám sát.</div></div>
+  </section>
+
+  <section aria-labelledby="ann-title">
+    <h2 id="ann-title">Thông báo cập nhật</h2>
+    <div class="list" id="announcements"><div class="card empty">Chưa có thông báo nào.</div></div>
+  </section>
+
+  <section aria-labelledby="contact-title">
+    <h2 id="contact-title">Khi gặp sự cố</h2>
+    <div class="card">
+      <ol class="steps">
+        <li>Tải lại trang và thử trên mạng khác (Wi-Fi/4G) để loại trừ lỗi từ phía mạng của bạn.</li>
+        <li>Ghi lại tên website, đường dẫn, thời điểm gặp lỗi (kèm múi giờ) và thông báo lỗi nếu có.</li>
+        <li>Gửi thông tin tới <a href="mailto:lien-he@tetprosoftware.com?subject=B%C3%A1o%20s%E1%BB%B1%20c%E1%BB%91%20d%E1%BB%8Bch%20v%E1%BB%A5">lien-he@tetprosoftware.com</a>.</li>
+        <li>Theo dõi mục “Thông báo cập nhật” khi nguồn giám sát được kết nối.</li>
+      </ol>
+      <p class="small muted" style="margin-bottom:0">Địa chỉ: 30 Phan Đình Phùng, Ba Đình, Hà Nội, Việt Nam.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="faq-title">
+    <h2 id="faq-title">Câu hỏi thường gặp</h2>
+    <details><summary>Vì sao trang hiển thị “chưa xác minh”?</summary><p>Đây là trang tĩnh. Khi chưa có endpoint JSON do hệ thống giám sát cung cấp, trang không thể xác nhận tình trạng thực tế nên không đưa ra kết luận.</p></details>
+    <details><summary>Trang có tự kiểm tra website từ trình duyệt không?</summary><p>Không. Một yêu cầu fetch từ trình duyệt bị ảnh hưởng bởi CORS, DNS, SSL, cache và mạng của người dùng, nên không phải phép đo uptime đáng tin cậy.</p></details>
+    <details><summary>Có công bố tỷ lệ uptime hay SLA không?</summary><p>Không. Trang chỉ hiển thị dữ liệu có nguồn, kèm thời gian và múi giờ. Mọi cam kết SLA (nếu có) phải được công bố riêng bằng văn bản.</p></details>
+    <details><summary>“Dữ liệu cũ” nghĩa là gì?</summary><p>Là dữ liệu có mốc cập nhật cũ hơn ngưỡng cho phép. Khi đó trạng thái hiển thị chỉ mang tính tham khảo.</p></details>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <h2>Tết Pro Software</h2>
+      <p class="muted" style="margin:0">30 Phan Đình Phùng, Ba Đình, Hà Nội, Việt Nam<br><a href="mailto:lien-he@tetprosoftware.com">lien-he@tetprosoftware.com</a></p>
+    </div>
+    <nav aria-label="Hệ sinh thái">
+      <h2>Hệ sinh thái</h2>
+      <ul id="eco"></ul>
+    </nav>
+    <nav aria-label="Mạng xã hội">
+      <h2>Mạng xã hội</h2>
+      <ul id="social"></ul>
+    </nav>
+  </div>
+  <div class="wrap small muted" style="margin-top:18px">© <span id="year"></span> Tết Pro Software. Trang status tĩnh, không thu thập thông tin cá nhân.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ===== CẤU HÌNH ===== */
+var CONFIG={
+  // Điền URL JSON công khai (HTTPS) khi có hệ thống giám sát. Không đặt token bí mật ở đây.
+  statusEndpoint:"",
+  refreshSeconds:60,
+  staleAfterMinutes:10,
+  timeoutMs:8000,
+  defaultTimezone:"Asia/Ho_Chi_Minh"
+};
+/* Định dạng JSON kỳ vọng:
+{ "updated_at":"2026-01-01T00:00:00+07:00","timezone":"Asia/Ho_Chi_Minh",
+  "components":[{"id":"com","status":"operational|degraded|partial_outage|major_outage|maintenance|unknown",
+     "checked_at":"ISO8601","message":"...","history":[{"date":"2026-01-01","status":"operational"}]}],
+  "incidents":[{"title":"","status":"","started_at":"","resolved_at":"","body":""}],
+  "maintenances":[{"title":"","starts_at":"","ends_at":"","body":""}],
+  "announcements":[{"title":"","published_at":"","body":""}] } */
+
+var COMPONENTS=[
+ {id:"com",name:"Website công ty (.com)",url:"https://www.tetprosoftware.com/"},
+ {id:"net",name:"Website quốc tế (.net)",url:"https://www.tetprosoftware.net/"},
+ {id:"me",name:"Cổng hệ sinh thái (.me)",url:"https://www.tetprosoftware.me/"},
+ {id:"app",name:"Danh mục ứng dụng (.app)",url:"https://www.tetprosoftware.app/"},
+ {id:"site",name:"Danh mục sản phẩm (.site)",url:"https://www.tetprosoftware.site/"},
+ {id:"store",name:"Cửa hàng (.store)",url:"https://www.tetprosoftware.store/"},
+ {id:"tech",name:"Website công nghệ (.tech)",url:"https://www.tetprosoftware.tech/"},
+ {id:"org",name:"Website tổ chức (.org)",url:"https://www.tetprosoftware.org/"},
+ {id:"xyz",name:"Trang hành trình (.xyz)",url:"https://www.tetprosoftware.xyz/"},
+ {id:"online",name:"Status page (.online)",url:"https://www.tetprosoftware.online/"}
+];
+var SOCIAL=[
+ ["Facebook","https://www.facebook.com/tetprosoftware"],["Instagram","https://www.instagram.com/tetprosoftware"],
+ ["Threads","https://www.threads.com/@tetprosoftware"],["TikTok","https://www.tiktok.com/@tetprosoftware"],
+ ["YouTube","https://www.youtube.com/@tetprosoftware"],["GitHub","https://github.com/tetprosoftware"],
+ ["Pinterest","https://www.pinterest.com/tetprosoftware"],["LinkedIn","https://www.linkedin.com/company/tetprosoftware"]
+];
+var STATUS={
+ operational:{label:"Hoạt động bình thường",icon:"✓"},
+ degraded:{label:"Suy giảm hiệu năng",icon:"▲"},
+ partial_outage:{label:"Gián đoạn một phần",icon:"◐"},
+ major_outage:{label:"Gián đoạn nghiêm trọng",icon:"✕"},
+ maintenance:{label:"Đang bảo trì",icon:"⚙"},
+ unknown:{label:"Chưa xác minh",icon:"?"}
+};
+var SEVERITY=["operational","maintenance","degraded","partial_outage","major_outage"];
+
+var $=function(id){return document.getElementById(id)};
+function el(tag,attrs,children){
+  var n=document.createElement(tag);
+  if(attrs)Object.keys(attrs).forEach(function(k){
+    if(k==="text")n.textContent=attrs[k];else n.setAttribute(k,attrs[k]);
+  });
+  (children||[]).forEach(function(c){if(c)n.appendChild(c)});
+  return n;
+}
+function normStatus(s){return STATUS[s]?s:"unknown"}
+function str(v,max){return typeof v==="string"?v.slice(0,max||500):""}
+function parseDate(v){var d=new Date(v);return isNaN(d.getTime())?null:d}
+var tz=CONFIG.defaultTimezone;
+function fmt(v){
+  var d=v instanceof Date?v:parseDate(v);
+  if(!d)return "không rõ thời gian";
+  try{return new Intl.DateTimeFormat("vi-VN",{dateStyle:"medium",timeStyle:"medium",timeZone:tz,timeZoneName:"short"}).format(d)}
+  catch(e){return d.toISOString()}
+}
+
+/* ===== THEME ===== */
+function applyTheme(t){if(t)document.documentElement.setAttribute("data-theme",t)}
+try{applyTheme(localStorage.getItem("tps-theme"))}catch(e){}
+$("theme").addEventListener("click",function(){
+  var cur=document.documentElement.getAttribute("data-theme");
+  if(!cur)cur=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  var next=cur==="dark"?"light":"dark";
+  applyTheme(next);
+  try{localStorage.setItem("tps-theme",next)}catch(e){}
+});
+
+/* ===== ADAPTER ===== */
+var StatusAdapter={
+  configured:function(){return /^https:\/\//i.test(CONFIG.statusEndpoint)},
+  fetch:function(){
+    var ctrl=new AbortController();
+    var t=setTimeout(function(){ctrl.abort()},CONFIG.timeoutMs);
+    return fetch(CONFIG.statusEndpoint,{cache:"no-store",credentials:"omit",headers:{Accept:"application/json"},signal:ctrl.signal})
+      .then(function(r){
+        clearTimeout(t);
+        if(!r.ok)throw new Error("HTTP "+r.status);
+        return r.json();
+      })
+      .then(StatusAdapter.normalize)
+      .catch(function(e){clearTimeout(t);throw e});
+  },
+  normalize:function(raw){
+    if(!raw||typeof raw!=="object"||!Array.isArray(raw.components))throw new Error("Dữ liệu JSON không đúng định dạng");
+    var updated=parseDate(raw.updated_at);
+    if(!updated)throw new Error("Thiếu hoặc sai trường updated_at");
+    var list=function(a){return Array.isArray(a)?a.slice(0,50):[]};
+    return {
+      updated:updated,
+      timezone:str(raw.timezone,60)||CONFIG.defaultTimezone,
+      components:raw.components.slice(0,50).map(function(c){return {
+        id:str(c.id,40),status:normStatus(c.status),checked:str(c.checked_at,40),message:str(c.message,300),
+        history:list(c.history).slice(-60).map(function(h){return {date:str(h.date,20),status:normStatus(h.status)}})}}),
+      incidents:list(raw.incidents).map(function(i){return {title:str(i.title,200),status:str(i.status,40),started:str(i.started_at,40),resolved:str(i.resolved_at,40),body:str(i.body,1000)}}),
+      maintenances:list(raw.maintenances).map(function(m){return {title:str(m.title,200),starts:str(m.starts_at,40),ends:str(m.ends_at,40),body:str(m.body,1000)}}),
+      announcements:list(raw.announcements).map(function(a){return {title:str(a.title,200),published:str(a.published_at,40),body:str(a.body,1000)}})
+    };
+  }
+};
+
+/* ===== RENDER ===== */
+function badge(s){
+  var m=STATUS[s];
+  return el("span",{"class":"badge","data-s":s},[el("span",{"aria-hidden":"true",text:m.icon}),el("span",{text:m.label})]);
+}
+function renderComponents(data,state){
+  var box=$("components");box.textContent="";
+  COMPONENTS.forEach(function(c){
+    var d=data&&data.components.filter(function(x){return x.id===c.id})[0];
+    var status=d?d.status:"unknown";
+    var checked=d&&d.checked&&parseDate(d.checked)?"Kiểm tra gần nhất: "+fmt(d.checked):(state==="loading"?"Đang tải dữ liệu…":"Chưa có dữ liệu kiểm tra");
+    var kids=[
+      el("div",{"class":"row"},[el("div",null,[el("h3",{text:c.name}),el("div",{"class":"url",text:c.url})]),badge(status)])
+    ];
+    if(d&&d.message)kids.push(el("div",{"class":"small",text:d.message}));
+    if(d&&d.history.length){
+      var h=el("div",{"class":"hist",role:"img","aria-label":"Lịch sử theo nguồn giám sát, "+d.history.length+" mốc gần nhất"});
+      d.history.forEach(function(p){h.appendChild(el("i",{"data-s":p.status,title:p.date+": "+STATUS[p.status].label}))});
+      kids.push(h);
+    }
+    var a=el("a",{"class":"btn primary",href:c.url,target:"_blank",rel:"noopener noreferrer"});
+    a.textContent="Mở website ↗";
+    kids.push(el("div",{"class":"foot"},[el("span",{"class":"small muted",text:checked}),a]));
+    box.appendChild(el("article",{"class":"card comp"},kids));
+  });
+}
+function renderList(id,items,emptyText,build){
+  var box=$(id);box.textContent="";
+  if(!items||!items.length){box.appendChild(el("div",{"class":"card empty",text:emptyText}));return}
+  items.forEach(function(i){box.appendChild(build(i))});
+}
+function itemCard(title,meta,body){
+  return el("article",{"class":"card item"},[el("h3",{text:title||"(không có tiêu đề)"}),el("div",{"class":"small muted",text:meta}),body?el("p",{"class":"small",text:body,style:"margin:8px 0 0"}):null]);
+}
+function renderLists(data){
+  renderList("incidents",data&&data.incidents,data?"Nguồn giám sát không báo cáo sự cố nào trong dữ liệu được cung cấp.":"Chưa có dữ liệu sự cố từ nguồn giám sát.",function(i){
+    return itemCard(i.title,(i.status?i.status+" · ":"")+"Bắt đầu: "+fmt(i.started)+(i.resolved?" · Khắc phục: "+fmt(i.resolved):""),i.body);
+  });
+  renderList("maintenances",data&&data.maintenances,data?"Không có lịch bảo trì trong dữ liệu được cung cấp.":"Chưa có dữ liệu bảo trì từ nguồn giám sát.",function(m){
+    return itemCard(m.title,"Từ "+fmt(m.starts)+" đến "+fmt(m.ends),m.body);
+  });
+  renderList("announcements",data&&data.announcements,"Chưa có thông báo nào.",function(a){
+    return itemCard(a.title,fmt(a.published),a.body);
+  });
+}
+function setOverview(s,title,text,time){
+  $("overview").setAttribute("data-s",s);
+  $("ov-ico").textContent=STATUS[s].icon;
+  $("overview-title").textContent=title;
+  $("ov-text").textContent=text;
+  $("ov-time").textContent=time||"";
+}
+function setBanner(kind,text){
+  var b=$("banner");
+  if(!text){b.hidden=true;return}
+  b.hidden=false;b.className="banner"+(kind?" "+kind:"");b.textContent=text;
+}
+function worst(components){
+  var w=0,hasKnown=false;
+  components.forEach(function(c){
+    var i=SEVERITY.indexOf(c.status);
+    if(i>-1){hasKnown=true;if(i>w)w=i}
+  });
+  return hasKnown?SEVERITY[w]:"unknown";
+}
+
+/* ===== LUỒNG CHÍNH ===== */
+var lastGood=null,timer=null;
+function showUnconfigured(){
+  setOverview("unknown","Chưa có dữ liệu giám sát trực tiếp","Monitoring chưa được cấu hình — trạng thái chưa xác minh.","");
+  setBanner("","Trang này chưa kết nối hệ thống giám sát. Các nút “Mở website” chỉ là liên kết; chúng không phản ánh tình trạng hoạt động.");
+  renderComponents(null,"none");renderLists(null);
+}
+function showData(data,stale){
+  tz=data.timezone;
+  var known=data.components.filter(function(c){return COMPONENTS.some(function(x){return x.id===c.id})});
+  if(!known.length){
+    setOverview("unknown","Nguồn dữ liệu không có thành phần nào","Không thể xác định trạng thái các website.","Cập nhật: "+fmt(data.updated));
+    setBanner("err","Endpoint trả về dữ liệu hợp lệ nhưng danh sách thành phần rỗng hoặc không khớp.");
+    renderComponents(null,"none");renderLists(data);return;
+  }
+  var w=worst(known);
+  var allOk=w==="operational"&&known.length===COMPONENTS.length;
+  var title=stale?"Dữ liệu có thể đã cũ":(w==="unknown"?"Chưa xác minh":allOk?"Nguồn giám sát báo cáo các thành phần hoạt động bình thường":STATUS[w].label);
+  var text="Tổng hợp từ "+known.length+"/"+COMPONENTS.length+" thành phần có dữ liệu. Chỉ phản ánh nội dung từ nguồn giám sát.";
+  setOverview(stale?"unknown":w,title,text,"Cập nhật nguồn: "+fmt(data.updated));
+  setBanner(stale?"stale":"",stale?"Dữ liệu quá "+CONFIG.staleAfterMinutes+" phút chưa được cập nhật. Hãy xem trạng thái dưới đây như thông tin tham khảo.":"");
+  renderComponents(data,"ok");renderLists(data);
+}
+function load(){
+  if(!StatusAdapter.configured()){showUnconfigured();return Promise.resolve()}
+  setOverview("unknown","Đang tải dữ liệu giám sát…","Vui lòng chờ trong giây lát.","");
+  setBanner("","");
+  if(!lastGood){var g=$("components");g.textContent="";for(var i=0;i<6;i++)g.appendChild(el("div",{"class":"skel"}))}
+  return StatusAdapter.fetch().then(function(data){
+    lastGood=data;
+    showData(data,Date.now()-data.updated.getTime()>CONFIG.staleAfterMinutes*60000);
+  }).catch(function(e){
+    if(lastGood){
+      showData(lastGood,true);
+      setBanner("err","Không thể làm mới dữ liệu ("+e.message+"). Đang hiển thị dữ liệu gần nhất đã tải.");
+    }else{
+      setOverview("unknown","Không thể tải dữ liệu giám sát","Trạng thái chưa xác minh.","");
+      setBanner("err","Lỗi khi tải endpoint: "+e.message+". Có thể do mạng, CORS hoặc endpoint chưa sẵn sàng.");
+      renderComponents(null,"none");renderLists(null);
+    }
+  });
+}
+$("refresh").addEventListener("click",load);
+
+/* ===== FOOTER ===== */
+function linkList(id,items,ext){
+  var ul=$(id);
+  items.forEach(function(it){
+    var a=el("a",{href:it[1],target:"_blank",rel:"noopener noreferrer"+(ext?" me":""),text:it[0]});
+    ul.appendChild(el("li",null,[a]));
+  });
+}
+linkList("eco",COMPONENTS.map(function(c){return [c.url.replace("https://www.",""). replace(/\/$/,""),c.url]}),false);
+linkList("social",SOCIAL,true);
+$("year").textContent=new Date().getFullYear();
+
+load();
+if(StatusAdapter.configured()&&CONFIG.refreshSeconds>=15){
+  timer=setInterval(function(){if(!document.hidden)load()},CONFIG.refreshSeconds*1000);
+}
+})();
+</script>
+</body>
+</html>
