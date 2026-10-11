@@ -15,292 +15,212 @@
 <meta name="twitter:card" content="summary">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2316A34A'/%3E%3Cpath d='M8 11h16M16 11v13' stroke='%23fff' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
-<!-- Tết Pro Software: Organization + WebSite + WebPage -->
+<!--[ Schema Structured Data: Organization, WebSite, Service ]-->
 <script>
 (function () {
-  "use strict";
+  var MAIN = "https://www.tetprosoftware.com";
+  var ORG_ID = MAIN + "/#organization";
 
-  /*
-   * CẤU HÌNH 10 WEBSITE
-   * Tên và mô tả cần thống nhất với nội dung thực tế
-   * trên trang chủ tương ứng.
-   */
-  var sites = {
-    "tetprosoftware.com": {
-      name: "Tết Pro Software",
-      alternateName: "Tết Pro",
-      language: "vi-VN",
-      description:
-        "Website Tết Pro Software tại Việt Nam, giới thiệu doanh nghiệp, giải pháp phần mềm và thông tin liên hệ."
+  var SITES = {
+    "tetprosoftware.com":    { name: "Tết Pro Software", description: "Tết Pro Software - Giải pháp chuyển đổi số toàn diện!", language: "vi-VN" },
+    "tetprosoftware.net":    { name: "Tết Pro Software Global", description: "Tết Pro Software - Software solutions, digital transformation and technology.", language: "en" },
+    "tetprosoftware.org":    { name: "Tết Pro Software Organization", description: "Thông tin tổ chức, định hướng và các hoạt động của Tết Pro Software.", language: "vi-VN" },
+    "tetprosoftware.online": { name: "Tết Pro Software Status", description: "Trang thông tin trạng thái hệ thống và dịch vụ trực tuyến của Tết Pro Software.", language: "vi-VN" },
+    "tetprosoftware.me":     { name: "Tết Pro Software Profile", description: "Hồ sơ thương hiệu, thông tin liên hệ và danh mục website thuộc hệ sinh thái Tết Pro Software.", language: "vi-VN" },
+    "tetprosoftware.store":  { name: "Tết Pro Software Store", description: "Thông tin dịch vụ, giải pháp phần mềm và bảng giá được công bố bởi Tết Pro Software.", language: "vi-VN" },
+    "tetprosoftware.tech":   { name: "Tết Pro Software Tech", description: "Kiến thức công nghệ, kỹ thuật phần mềm và các giải pháp công nghệ của Tết Pro Software.", language: "vi-VN" },
+    "tetprosoftware.app":    { name: "Tết Pro Software Apps", description: "Danh mục ứng dụng phần mềm và hướng dẫn cài đặt thuộc hệ sinh thái Tết Pro Software.", language: "vi-VN" },
+    "tetprosoftware.xyz":    { name: "Tết Pro Software Story", description: "Câu chuyện thương hiệu, hành trình phát triển và định hướng của Tết Pro Software.", language: "vi-VN" },
+    "tetprosoftware.site":   { name: "Tết Pro Software Products", description: "Danh mục sản phẩm phần mềm và thông tin sản phẩm của Tết Pro Software.", language: "vi-VN" }
+  };
+
+  var host = location.hostname.replace(/^www\./, "").toLowerCase();
+  var origin = location.origin;
+  var path = location.pathname;
+
+  // Nhận diện domain; nếu không có trong danh sách thì dùng dữ liệu của chính trang
+  var metaDesc = document.querySelector('meta[name="description"]');
+  var site = SITES[host] || {
+    name: document.title,
+    description: metaDesc ? metaDesc.content : "",
+    language: document.documentElement.lang || "vi-VN"
+  };
+
+  var canonical = document.querySelector('link[rel="canonical"]');
+  var pageUrl = (canonical && canonical.href) || (origin + path);
+
+  // Mô tả sẵn cho 2 trang chung, chỉ áp dụng trên domain chính
+  var presetPages = {
+    "/p/gioi-thieu.html": {
+      name: "Giới thiệu",
+      description: "Chúng tôi là những người sáng tạo, kết nối ý tưởng với hiện thực. Hãy cùng chúng tôi khám phá hành trình đổi mới!"
     },
-
-    "tetprosoftware.net": {
-      name: "Tết Pro Software Global",
-      alternateName: "Tết Pro Software",
-      language: "en",
-      description:
-        "International website for Tết Pro Software, its software solutions and digital technology services."
-    },
-
-    "tetprosoftware.org": {
-      name: "Tết Pro Software Organization",
-      alternateName: "Tết Pro Software",
-      language: "vi-VN",
-      description:
-        "Thông tin về Tết Pro Software, định hướng hoạt động và hồ sơ tổ chức."
-    },
-
-    "tetprosoftware.online": {
-      name: "Tết Pro Software Status",
-      alternateName: "Tết Pro Status",
-      language: "vi-VN",
-      description:
-        "Trang theo dõi thông tin và trạng thái dịch vụ của hệ sinh thái Tết Pro Software."
-    },
-
-    "tetprosoftware.me": {
-      name: "Tết Pro Software Profile",
-      alternateName: "Tết Pro Profile",
-      language: "vi-VN",
-      description:
-        "Hồ sơ thương hiệu, thông tin liên hệ và danh bạ hệ sinh thái Tết Pro Software."
-    },
-
-    "tetprosoftware.store": {
-      name: "Tết Pro Software Store",
-      alternateName: "Tết Pro Store",
-      language: "vi-VN",
-      description:
-        "Danh mục dịch vụ phần mềm, giải pháp số và thông tin giá được công bố bởi Tết Pro Software."
-    },
-
-    "tetprosoftware.tech": {
-      name: "Tết Pro Software Tech",
-      alternateName: "Tết Pro Tech",
-      language: "vi-VN",
-      description:
-        "Nội dung công nghệ, kỹ thuật phần mềm và giải pháp kỹ thuật của Tết Pro Software."
-    },
-
-    "tetprosoftware.app": {
-      name: "Tết Pro Software Apps",
-      alternateName: "Tết Pro Apps",
-      language: "vi-VN",
-      description:
-        "Danh mục ứng dụng, phần mềm và hướng dẫn cài đặt thuộc hệ sinh thái Tết Pro Software."
-    },
-
-    "tetprosoftware.xyz": {
-      name: "Tết Pro Software Story",
-      alternateName: "Tết Pro Story",
-      language: "vi-VN",
-      description:
-        "Câu chuyện thương hiệu, hành trình phát triển và định hướng của Tết Pro Software."
-    },
-
-    "tetprosoftware.site": {
-      name: "Tết Pro Software Products",
-      alternateName: "Tết Pro Products",
-      language: "vi-VN",
-      description:
-        "Danh mục sản phẩm phần mềm và thông tin sản phẩm thuộc hệ sinh thái Tết Pro Software."
+    "/p/lien-he.html": {
+      name: "Liên hệ",
+      description: "Liên hệ với chúng tôi để khám phá giải pháp phần mềm tối ưu. Hãy chia sẻ ý tưởng của bạn - chúng tôi ở đây để hỗ trợ!"
     }
   };
 
-  /*
-   * Nhận diện domain hiện tại.
-   * www.tetprosoftware.com và tetprosoftware.com
-   * dùng cùng một cấu hình website.
-   */
-  var hostname = (window.location.hostname || "")
-    .toLowerCase()
-    .replace(/^www\./, "");
-
-  var site = sites[hostname];
-
-  /*
-   * Fallback nếu triển khai trên hostname khác.
-   */
-  if (!site) {
-    site = {
-      name: "Tết Pro Software",
-      alternateName: "Tết Pro",
-      language: document.documentElement.lang || "vi-VN",
-      description:
-        "Thông tin về Tết Pro Software và hệ sinh thái phần mềm."
-    };
-  }
-
-  var origin =
-    window.location.protocol + "//" + window.location.host;
-
-  var siteUrl = origin.replace(/\/+$/, "") + "/";
-  var organizationId =
-    "https://www.tetprosoftware.com/#organization";
-  var websiteId = siteUrl + "#website";
-
-  /*
-   * Ưu tiên canonical URL nếu trang đã khai báo.
-   * Nếu không có canonical, sử dụng URL hiện tại,
-   * loại bỏ query string và fragment.
-   */
-  var canonicalElement =
-    document.querySelector('link[rel="canonical"]');
-
-  var pageUrl;
-
-  if (canonicalElement && canonicalElement.href) {
-    pageUrl = canonicalElement.href;
+  var info;
+  if (path === "/") {
+    info = { name: "Trang chủ - " + site.name };
+  } else if (host === "tetprosoftware.com" && presetPages[path]) {
+    info = presetPages[path];
   } else {
-    pageUrl = window.location.href.split("#")[0].split("?")[0];
+    info = { name: document.title };
   }
 
-  var title = document.title || site.name;
-
-  var descriptionElement =
-    document.querySelector('meta[name="description"]');
-
-  var pageDescription =
-    descriptionElement && descriptionElement.content
-      ? descriptionElement.content.trim()
-      : site.description;
-
-  var language =
-    document.documentElement.getAttribute("lang") ||
-    site.language;
-
-  /*
-   * THỰC THỂ DOANH NGHIỆP CHUNG
-   * Dùng cùng @id trên cả 10 domain.
-   */
-  var organization = {
-    "@type": "Organization",
-    "@id": organizationId,
-    "name": "Tết Pro Software",
-    "alternateName": "Tết Pro",
-    "legalName": "Tết Pro Software JSC",
-    "url": "https://www.tetprosoftware.com/",
-    "slogan": "Giải pháp chuyển đổi số toàn diện!",
-    "foundingDate": "2021-05-25",
-    "founder": {
-      "@type": "Person",
-      "name": "Ngô Anh Vũ"
-    },
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieUHOWp5V05IZV49DjNBoZRuyzD0bGzmlLAmtxWHXj6ZCob0RgZPRX7WrqMPP7BJiotJ6ztL1Z2sd3a3FeFNQNc43DtdrMLfHMI7jX5yA3bRpvulx5nWeM3zFf4Jp0fnIO59CBCnW4eHbCW1ApFRPB-L5o8K4SiB2Lgmz8hh7Fs7JDlHi5j7hiDIAK3a9l/"
-    },
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "30 Phan Đình Phùng",
-      "addressLocality": "Ba Đình",
-      "addressRegion": "Hà Nội",
-      "postalCode": "11120",
-      "addressCountry": "VN"
-    },
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "Liên hệ",
-      "email": "lien-he@tetprosoftware.com",
-      "url": "https://www.tetprosoftware.com/p/lien-he.html"
-    },
-      "sameAs": [
-        "https://www.facebook.com/Tetpro.official",
-        "https://www.youtube.com/c/TetProVN",
-        "https://www.pinterest.com/Tetprovn",
-        "https://www.tetproagency.site",
-        "https://www.tetpro.xyz",
-        "https://www.tetproagency.net",
-        "https://www.tetproagency.online",
-        "https://www.tetproagency.app",
-        "https://www.tetproagency.store",
-        "https://www.tetproagency.me",
-        "https://www.tetproagency.org",
-        "https://www.tetpro.tech",
-        "https://www.tetproagency.com",
-        "https://www.tetpro.me",
-        "https://www.tetpro.app",
-        "https://www.tetpro.net",
-        "https://www.tetpro.online",
-        "https://www.tetpro.site",
-        "https://www.tetpro.store",
-        "https://www.tetprosoftware.online",
-        "https://www.tetprosoftware.tech",
-        "https://www.tetprosoftware.com",
-        "https://www.tetprosoftware.site",
-        "https://www.tetprosoftware.net",
-        "https://www.tetprosoftware.store",
-        "https://www.tetprosoftware.app",
-        "https://www.tetprosoftware.me",
-        "https://www.tetproagency.tech",
-        "https://www.tetprosoftware.org",
-        "https://www.tetprovn.tech",
-        "https://www.tetprovn.site",
-        "https://www.tetprovn.net",
-        "https://www.tetprovn.org",
-        "https://www.tetprovn.com",
-        "https://www.tetprovn.me",
-        "https://www.tetprovn.online",
-        "https://www.tetprosoftware.xyz",
-        "https://www.tetprovn.app",
-        "https://www.tetprovn.store",
-        "https://www.tetprovn.xyz",
-        "https://tet.pro.vn"
-      ]
-
-  };
-
-  /*
-   * WEBSITE RIÊNG CỦA DOMAIN ĐANG TRUY CẬP
-   */
-  var website = {
-    "@type": "WebSite",
-    "@id": websiteId,
-    "url": siteUrl,
-    "name": site.name,
-    "alternateName": site.alternateName,
-    "description": site.description,
-    "inLanguage": language,
-    "publisher": {
-      "@id": organizationId
-    }
-  };
-
-  /*
-   * WEBPAGE CỦA URL HIỆN TẠI
-   */
-  var webpage = {
+  var webPage = {
     "@type": "WebPage",
     "@id": pageUrl + "#webpage",
     "url": pageUrl,
-    "name": title,
-    "description": pageDescription,
-    "inLanguage": language,
-    "isPartOf": {
-      "@id": websiteId
-    },
-    "about": {
-      "@id": organizationId
-    }
+    "name": info.name,
+    "inLanguage": site.language,
+    "isPartOf": { "@id": origin + "/#website" }
   };
+  if (info.description) webPage.description = info.description;
+  if (path === "/") webPage.about = { "@id": ORG_ID };
 
-  var structuredData = {
+  var data = {
     "@context": "https://schema.org",
     "@graph": [
-      organization,
-      website,
-      webpage
+      {
+        "@type": "Organization",
+        "@id": ORG_ID,
+        "name": "Tết Pro",
+        "legalName": "Tết Pro Software JSC",
+        "slogan": "Giải pháp chuyển đổi số toàn diện - Vì một tương lai tươi sáng hơn!",
+        "url": MAIN,
+        "founder": { "@type": "Person", "name": "Ngô Anh Vũ" },
+        "foundingDate": "2021-05-25",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieUHOWp5V05IZV49DjNBoZRuyzD0bGzmlLAmtxWHXj6ZCob0RgZPRX7WrqMPP7BJiotJ6ztL1Z2sd3a3FeFNQNc43DtdrMLfHMI7jX5yA3bRpvulx5nWeM3zFf4Jp0fnIO59CBCnW4eHbCW1ApFRPB-L5o8K4SiB2Lgmz8hh7Fs7JDlHi5j7hiDIAK3a9l/"
+        },
+        "image": {
+          "@type": "ImageObject",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieUHOWp5V05IZV49DjNBoZRuyzD0bGzmlLAmtxWHXj6ZCob0RgZPRX7WrqMPP7BJiotJ6ztL1Z2sd3a3FeFNQNc43DtdrMLfHMI7jX5yA3bRpvulx5nWeM3zFf4Jp0fnIO59CBCnW4eHbCW1ApFRPB-L5o8K4SiB2Lgmz8hh7Fs7JDlHi5j7hiDIAK3a9l/"
+        },
+        "member": { "@type": "Person", "name": "Lê Minh Ngọc" },
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "30 Phan Đình Phùng",
+          "addressLocality": "Ba Đình",
+          "addressRegion": "Hà Nội",
+          "postalCode": "11120",
+          "addressCountry": "VN"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "Liên hệ",
+          "telephone": "+84888888888",
+          "email": "lienhe@tetprovn.com",
+          "url": MAIN + "/p/lien-he.html"
+        },
+        "sameAs": [
+          "https://www.facebook.com/Tetpro.official",
+          "https://www.youtube.com/c/TetProVN",
+          "https://www.pinterest.com/Tetprovn",
+          "https://www.tetproagency.site",
+          "https://www.tetpro.xyz",
+          "https://www.tetproagency.net",
+          "https://www.tetproagency.online",
+          "https://www.tetproagency.app",
+          "https://www.tetproagency.store",
+          "https://www.tetproagency.me",
+          "https://www.tetproagency.org",
+          "https://www.tetpro.tech",
+          "https://www.tetproagency.com",
+          "https://www.tetpro.me",
+          "https://www.tetpro.app",
+          "https://www.tetpro.net",
+          "https://www.tetpro.online",
+          "https://www.tetpro.site",
+          "https://www.tetpro.store",
+          "https://www.tetprosoftware.online",
+          "https://www.tetprosoftware.tech",
+          "https://www.tetprosoftware.com",
+          "https://www.tetprosoftware.site",
+          "https://www.tetprosoftware.net",
+          "https://www.tetprosoftware.store",
+          "https://www.tetprosoftware.app",
+          "https://www.tetprosoftware.me",
+          "https://www.tetproagency.tech",
+          "https://www.tetprosoftware.org",
+          "https://www.tetprovn.tech",
+          "https://www.tetprovn.site",
+          "https://www.tetprovn.net",
+          "https://www.tetprovn.org",
+          "https://www.tetprovn.com",
+          "https://www.tetprovn.me",
+          "https://www.tetprovn.online",
+          "https://www.tetprosoftware.xyz",
+          "https://www.tetprovn.app",
+          "https://www.tetprovn.store",
+          "https://www.tetprovn.xyz",
+          "https://tet.pro.vn"
+        ],
+        "owns": [
+          {
+            "@type": "Product",
+            "name": "Been Together",
+            "description": "Đồng hành cùng bạn trên con đường tình yêu!",
+            "review": {
+              "@type": "Review",
+              "reviewRating": { "@type": "Rating", "ratingValue": 4, "bestRating": 5 },
+              "author": { "@type": "Person", "name": "Ngô Anh Vũ" }
+            },
+            "aggregateRating": { "@type": "AggregateRating", "ratingValue": 4.4, "reviewCount": 89 }
+          },
+          {
+            "@type": "Product",
+            "name": "Student Manager",
+            "description": "Ứng dụng quản lý học sinh mạnh mẽ và hiệu quả!",
+            "review": {
+              "@type": "Review",
+              "reviewRating": { "@type": "Rating", "ratingValue": 4, "bestRating": 5 },
+              "author": [
+                { "@type": "Person", "name": "Ninh Thị Thanh Hoa" },
+                { "@type": "Person", "name": "Lê Minh Ngọc" }
+              ]
+            },
+            "aggregateRating": { "@type": "AggregateRating", "ratingValue": 4.5, "reviewCount": 88 }
+          }
+        ]
+      },
+      {
+        // Đúng một node WebSite, lấy từ SITES theo domain đang chạy
+        "@type": "WebSite",
+        "@id": origin + "/#website",
+        "url": origin,
+        "name": site.name,
+        "description": site.description,
+        "inLanguage": site.language,
+        "publisher": { "@id": ORG_ID }
+      },
+      webPage,
+      {
+        "@type": "Service",
+        "name": "Dịch vụ mạng xã hội",
+        "description": "Tận dụng sức mạnh của mạng xã hội để quảng bá thương hiệu của bạn, thu hút sự chú ý và tạo ảnh hưởng tích cực.",
+        "provider": { "@id": ORG_ID },
+        "brand": { "@type": "Brand", "name": "Social Media" },
+        "offers": [
+          { "@type": "AggregateOffer", "name": "Giá rẻ", "priceCurrency": "VND", "lowPrice": 44900 },
+          { "@type": "AggregateOffer", "name": "Phổ thông", "priceCurrency": "VND", "lowPrice": 99000 },
+          { "@type": "AggregateOffer", "name": "Cao cấp", "priceCurrency": "VND", "lowPrice": 189000 }
+        ]
+      }
     ]
   };
 
-  /*
-   * Thêm JSON-LD vào tài liệu.
-   */
-  var script = document.createElement("script");
-  script.type = "application/ld+json";
-  script.textContent = JSON.stringify(structuredData);
-
-  (document.head || document.documentElement).appendChild(script);
+  var old = document.getElementById("auto-jsonld");
+  if (old) old.remove();
+  var s = document.createElement("script");
+  s.type = "application/ld+json";
+  s.id = "auto-jsonld";
+  s.textContent = JSON.stringify(data);
+  document.head.appendChild(s);
 })();
 </script>
   <style>
